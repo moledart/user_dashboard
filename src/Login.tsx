@@ -1,8 +1,9 @@
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Form from "./Form";
+import { baseUrl } from "../config";
 
 const Login = () => {
+  const navigate = useNavigate();
   const content = {
     title: "Welcome back!",
     buttonText: "Sign In",
@@ -10,6 +11,12 @@ const Login = () => {
     linkText: "Sign Up",
     route: "/register",
   };
+
+  fetch(`${baseUrl}/loggedIn`, {
+    credentials: "include",
+  }).then((res) => {
+    if (res.status === 201) navigate("/");
+  });
 
   return <Form {...content} />;
 };

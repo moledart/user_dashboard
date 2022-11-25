@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { baseUrl } from "../config";
 
 interface Input {
   username: string;
@@ -22,7 +23,7 @@ function Form(props: { [key: string]: string }) {
   const { register, handleSubmit } = useForm<Input>();
 
   const onSignUp: SubmitHandler<Input> = (data) => {
-    fetch("https://express-backend-ivory.vercel.app/createUser", {
+    fetch(`${baseUrl}/createUser`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -37,7 +38,7 @@ function Form(props: { [key: string]: string }) {
   };
 
   const onLogin: SubmitHandler<Input> = (data) => {
-    fetch("https://express-backend-ivory.vercel.app/login", {
+    fetch(`${baseUrl}/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

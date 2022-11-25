@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import UserTable from "./UserTable";
 import { IoTrashBinOutline, IoBanOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
+import { baseUrl } from "../config";
 
 type User = {
   id: number;
@@ -15,7 +16,7 @@ type User = {
 };
 
 const fetchUsers = () =>
-  fetch("https://express-backend-ivory.vercel.app/users", {
+  fetch(`${baseUrl}/users`, {
     credentials: "include",
   }).then((res) => {
     if (res.status === 403) throw { code: 403, message: "Login first" };
@@ -23,7 +24,7 @@ const fetchUsers = () =>
   });
 
 const deleteUsers = (ids: number[]) =>
-  fetch("https://express-backend-ivory.vercel.app/users", {
+  fetch(`${baseUrl}/users`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -33,7 +34,7 @@ const deleteUsers = (ids: number[]) =>
   });
 
 const changeUserStatus = (userData: { users: number[]; action: string }) => {
-  return fetch("https://express-backend-ivory.vercel.app/users", {
+  return fetch(`${baseUrl}/users`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -45,7 +46,6 @@ const changeUserStatus = (userData: { users: number[]; action: string }) => {
 
 function Dashboard() {
   const navigate = useNavigate();
-  const [isLoggedOut, setIsLoggedOut] = useState<boolean>(false);
   const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
   const queryClient = useQueryClient();
   const usersQuery = useQuery<User[]>({
@@ -55,17 +55,14 @@ function Dashboard() {
   });
 
   useEffect(() => {
-    if (isLoggedOut) navigate("/login");
-  }, [isLoggedOut]);
-
-  useEffect(() => {
-    if (usersQuery.isError) navigate("/login");
+    if (usersQuery.isFetchedAfterMount && usersQuery.isError)
+      navigate("/login");
   }, [usersQuery.isError]);
 
   const handleLogout = () =>
-    fetch("https://express-backend-ivory.vercel.app/logout", {
+    fetch(`${baseUrl}/logout`, {
       credentials: "include",
-    }).then(() => setIsLoggedOut(true));
+    }).then(() => navigate("/login"));
 
   const handleDeleteUsers = useMutation({
     mutationFn: deleteUsers,
@@ -91,7 +88,7 @@ function Dashboard() {
     <div className="container mx-auto max-w-2xl min-h-screen flex items-start">
       <div className="flex flex-col w-full pt-20">
         <div className="flex justify-between mb-20">
-          <h1 className="text-4xl font-semibold">Welcome to Dashboard!</h1>
+          <h1 className="text-4xl font-semibold">Welcome to the Dashboard</h1>
           <button
             onClick={handleLogout}
             className="bg-zinc-200 px-3 py-2 flex items-center gap-1 hover:bg-zinc-800 hover:text-zinc-50"
